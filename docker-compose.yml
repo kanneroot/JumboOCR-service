@@ -1,0 +1,23 @@
+services:
+  pdf-to-word-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pdf_to_word_microservice
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      - DASHSCOPE_BASE_URL=${DASHSCOPE_BASE_URL:-https://ws-11apde4s0qdodprl.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1}
+      - MODEL_NAME=${MODEL_NAME:-qwen3.7-flash}
+      - RENDER_DPI=${RENDER_DPI:-200}
+      - MAX_CONCURRENT_PAGES=${MAX_CONCURRENT_PAGES:-6}
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-50}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
